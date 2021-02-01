@@ -104,26 +104,28 @@ class Game:
         """
         Prints a command line representation of the board
         """
+        # Header
+        print(f"MOVE: {str(self._move_num)}")
+        print(f"PLAYER {str(self._player)} PLAYS {str(self._move)}")
+        print("-" * 8)
+
+        # Board
         copy = deepcopy(self._board)
 
         for col in copy:
             col += [" "] * max(0, self._height - len(col))
         rows = list(zip(*copy))
 
-        print(f"MOVE: {str(self._move_num)}")
-        print(f"PLAYER {str(self._player)} PLAYS {str(self._move)}")
-        print("-" * 8)
-
         for row in reversed(rows):
             print("".join([str(item) for item in row]))
-
+        
+        # Footer
         if msg:
             print("-" * 8)
             print(msg)
-
+            
         print("=" * 8)
-
-
+        
 ####################
 # Player Strategies
 ####################
