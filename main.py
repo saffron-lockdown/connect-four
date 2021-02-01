@@ -131,33 +131,46 @@ class Game:
             
         print("=" * 8)
         
-####################
-# Player Strategies
-####################
-
-
-def player0():
-    # always goes for col 2
-    return 2
-
-
-def player1():
-    # plays randomly
-    return random.randint(0, 7)
 
 
 ####################
 # Game Loop
 ####################
 
-winner = None
-g = Game(verbose=False)
-
 # To make a move, pass the column number to Game.move().
 # The function returns the winning player and the updated board
-while winner is None:
 
-    winner, board = g.move(player0())
+def run_game(alg0, alg1, verbose=False):
+    winner = None
+    g = Game(verbose=verbose)
+    board = g._board
 
-    if winner is None:
-        winner, board = g.move(player1())
+    while True:
+        move = alg0(board)
+        winner, board = g.move(move)
+
+        if winner is not None:
+            return winner
+
+        move = alg1(board)
+        winner, board = g.move(move)
+        
+        if winner is not None:
+            return winner
+
+####################
+# Player Strategies
+####################
+
+
+def alg0(board):
+    # always goes for col 2
+    return 2
+
+
+def alg1(board):
+    # plays randomly
+    return random.randint(0, 7)
+
+winner = run_game(alg0, alg1, verbose=True)
+print(winner)
