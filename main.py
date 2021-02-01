@@ -7,12 +7,13 @@ class Game:
     _width = 8
     _height = 8
 
-    def __init__(self):
+    def __init__(self, verbose=True):
         self._board = [[] for _ in range(self._width)]
         self._player = 0
         self._winner = None
         self._move_num = 0
         self._move = None
+        self._verbose = verbose
 
     def move(self, col_num):
         """
@@ -104,6 +105,10 @@ class Game:
         """
         Prints a command line representation of the board
         """
+
+        if not self._verbose:
+            return
+
         # Header
         print(f"MOVE: {str(self._move_num)}")
         print(f"PLAYER {str(self._player)} PLAYS {str(self._move)}")
@@ -138,7 +143,7 @@ def player0():
 
 def player1():
     # plays randomly
-    return random.randint(0, 8)
+    return random.randint(0, 7)
 
 
 ####################
@@ -146,7 +151,7 @@ def player1():
 ####################
 
 winner = None
-g = Game()
+g = Game(verbose=False)
 
 # To make a move, pass the column number to Game.move().
 # The function returns the winning player and the updated board
