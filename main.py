@@ -4,8 +4,8 @@ import random
 
 class Game:
 
-    _width = 8
-    _height = 8
+    _width = 7
+    _height = 7
 
     def __init__(self, verbose=True):
         self._board = [[] for _ in range(self._width)]
@@ -19,27 +19,32 @@ class Game:
         """
         Places a counter in the column with index `column_num`
         """
+
+        # Return if game already won
+        if self._winner is not None:
+            return self._winner, deepcopy(self._board)
+
         self._move_num += 1
         self._move = col_num
 
-        # Stop if board full
+        # Return if board full
         if sum([len(col) for col in self._board]) == self._width * self._height:
             self.print(msg="board full!")
-            return -1, self._board
+            return -1, deepcopy(self._board)
 
-        # Stop if move is invalid
+        # Return if move is invalid
         if col_num < 0 or col_num >= self._width:
             self.print(msg="move not recognised!")
             self._player = 1 - self._player
-            return self._winner, self._board
+            return self._winner, deepcopy(self._board)
 
         col = self._board[col_num]
 
-        # Check space for counter
+        # Return if no space for counter
         if len(col) >= self._height:
             self.print(msg="no space for counter!")
             self._player = 1 - self._player
-            return self._winner, self._board
+            return self._winner, deepcopy(self._board)
 
         col.append(self._player)
 
@@ -51,7 +56,7 @@ class Game:
             self.print()
             self._player = 1 - self._player
 
-        return self._winner, self._board
+        return self._winner, deepcopy(self._board)
 
     def check_line(self, line):
         """
@@ -172,5 +177,7 @@ def alg1(board):
     # plays randomly
     return random.randint(0, 7)
 
+"""
 winner = run_game(alg0, alg1, verbose=True)
 print(winner)
+"""
