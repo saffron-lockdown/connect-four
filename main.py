@@ -1,11 +1,13 @@
 from copy import deepcopy
 import random
 
+BOARD_SIZE = 7
+
 
 class Game:
 
-    _width = 7
-    _height = 7
+    _width = BOARD_SIZE
+    _height = BOARD_SIZE
 
     def __init__(self, verbose=True):
         self._board = [[] for _ in range(self._width)]
@@ -37,6 +39,11 @@ class Game:
             self.print(msg="move not recognised!")
             self._player = 1 - self._player
             return self._winner, deepcopy(self._board)
+
+        # Return if more than 2*BOARD_SIZE^2 moves played
+        if self._move_num > 2 * self._width * self._height:
+            self.print(msg="move limit reached")
+            return -1, deepcopy(self._board)
 
         col = self._board[col_num]
 
@@ -128,14 +135,13 @@ class Game:
 
         for row in reversed(rows):
             print("".join([str(item) for item in row]))
-        
+
         # Footer
         if msg:
             print("-" * 8)
             print(msg)
-            
+
         print("=" * 8)
-        
 
 
 ####################
@@ -145,23 +151,51 @@ class Game:
 # To make a move, pass the column number to Game.move().
 # The function returns the winning player and the updated board
 
-def run_game(alg0, alg1, verbose=False):
+
+def run_game(alg0, alg1, verbose=0):
     winner = None
     g = Game(verbose=verbose)
     board = g._board
 
     while True:
-        move = alg0(board)
+        move = alg0.move(board, as_player=0)
         winner, board = g.move(move)
 
         if winner is not None:
             return winner
 
-        move = alg1(board)
+        move = alg1.move(board, as_player=1)
         winner, board = g.move(move)
-        
+
         if winner is not None:
             return winner
+
+
+def play_game(opponent):
+    winner = None
+    g = Game(verbose=True)
+    board = g._board
+
+    while True:
+        move = opponent.move(board, as_player=0)
+        winner, board = g.move(move)
+
+        if winner is not None:
+            return winner
+
+        print("".join([str(x) for x in range(BOARD_SIZE)]))
+
+        move = None
+        while move is None:
+            choice = int(input(f"choose column 0-{BOARD_SIZE-1}: "))
+            if choice in range(BOARD_SIZE):
+                move = choice
+
+        winner, board = g.move(move)
+
+        if winner is not None:
+            return winner
+
 
 ####################
 # Player Strategies
@@ -176,6 +210,7 @@ def alg0(board):
 def alg1(board):
     # plays randomly
     return random.randint(0, 7)
+
 
 """
 winner = run_game(alg0, alg1, verbose=True)
