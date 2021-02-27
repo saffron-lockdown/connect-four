@@ -1,7 +1,7 @@
 from copy import deepcopy
 import random
 
-BOARD_SIZE = 7
+BOARD_SIZE = 5
 
 
 class Game:
@@ -34,10 +34,10 @@ class Game:
             self.print(msg="board full!")
             return -1, deepcopy(self._board)
 
-        # Return if move is invalid
+        # Other player wins if move is invalid
         if col_num < 0 or col_num >= self._width:
-            self.print(msg="move not recognised!")
-            self._player = 1 - self._player
+            self._winner = 1 - self._player
+            self.print(msg=f"move not recognised!\nWINNER: PLAYER {str(self._winner)}!")
             return self._winner, deepcopy(self._board)
 
         # Return if more than 2*BOARD_SIZE^2 moves played
@@ -47,10 +47,12 @@ class Game:
 
         col = self._board[col_num]
 
-        # Return if no space for counter
+        # Other player wins if no space for counter
         if len(col) >= self._height:
-            self.print(msg="no space for counter!")
-            self._player = 1 - self._player
+            self._winner = 1 - self._player
+            self.print(
+                msg=f"no space for counter!\nWINNER: PLAYER {str(self._winner)}!"
+            )
             return self._winner, deepcopy(self._board)
 
         col.append(self._player)
