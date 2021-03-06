@@ -1,14 +1,14 @@
-from main import Game, run_game, BOARD_SIZE
-from tensorflow import keras
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, InputLayer
-from tqdm import tqdm
+import random
 from copy import deepcopy
 
 import numpy as np
-import random
-
 from scipy.special import softmax
+from tqdm import tqdm
+
+from main import BOARD_SIZE, Game, run_game
+from tensorflow import keras
+from tensorflow.keras.layers import Dense, InputLayer
+from tensorflow.keras.models import Sequential
 
 
 class BasicModel:
@@ -38,6 +38,16 @@ class BasicModel:
     def fit(self, *args, **kwargs):
         pass
 
+class RandomModel:
+
+    _name = "random_model"
+
+    def move(self, board, as_player):
+        return random.randint(0, BOARD_SIZE - 1)
+
+    def fit(self, *args, **kwargs):
+        pass
+
 
 class Me:
     def move(self, board, as_player):
@@ -50,7 +60,7 @@ class Model:
     _name = None
     _moves = []
 
-    def __init__(self, load_model_name=None, model_name='model'):
+    def __init__(self, load_model_name=None, model_name="model"):
         if load_model_name:
             self._model = keras.models.load_model(load_model_name)
             self._name = load_model_name
@@ -77,9 +87,14 @@ class Model:
     def initialise(self):
         self._model = Sequential()
         self._model.add(InputLayer(batch_input_shape=(1, 2 * BOARD_SIZE ** 2)))
-        self._model.add(Dense(4 * BOARD_SIZE ** 2, activation="relu"))
+        self._model.add(Dense(6 * BOARD_SIZE ** 2, activation="relu"))
+        self._model.add(Dense(2 * BOARD_SIZE, activation="relu"))
         self._model.add(Dense(BOARD_SIZE, activation="linear"))
-        self._model.compile(loss="mse", optimizer="adam", metrics=["mae"])
+        self._model.compile(
+            loss="mse",
+            optimizer=keras.optimizers.Adam(learning_rate=0.005),
+            metrics=["mae"],
+        )
 
     def input_encoding(self, board, as_player):
 
@@ -115,4 +130,4 @@ class Model:
         self._model.fit(self.input_encoding(board, as_player), *args, **kwargs)
 
     def save(self, model_name):
-        self._model.save(model_name)
+        self._model.save('models/' + model_name)
