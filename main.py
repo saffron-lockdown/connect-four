@@ -1,7 +1,8 @@
-from copy import deepcopy
 import random
+from copy import deepcopy
 
-BOARD_SIZE = 5
+BOARD_SIZE = 4
+LINE_LENGTH = 3 # the line you need to make
 
 
 class Game:
@@ -16,6 +17,19 @@ class Game:
         self._move_num = 0
         self._move = None
         self._verbose = verbose
+
+        self.horizontal_seeds = [
+            [i, j] for i in range(0, self._width - LINE_LENGTH + 1) for j in range(0, self._height)
+        ]
+        self.vertical_seeds = [[j, i] for [i, j] in horizontal_seeds]
+        self.up_diag_seeds = [
+            [i, j]
+            for i in range(0, self._width - LINE_LENGTH + 1)
+            for j in range(0, self._height - LINE_LENGTH + 1)
+        ]
+        self.down_diag_seeds = [
+            [i, j] for i in range(0, self._width - LINE_LENGTH + 1) for j in range(LINE_LENGTH - 1, self._height)
+        ]
 
     def move(self, col_num):
         """
@@ -77,40 +91,28 @@ class Game:
             result = [self._board[j][i] for [i, j] in line]
         except:
             return False
-        return len(result) == 4 and len(set(result)) == 1
+        return len(result) == LINE_LENGTH and len(set(result)) == 1
 
     def winner(self):
         """
         Returns True if the game has a horizontal, vertical or diagonal line of four counters
         belonging to the same player
         """
-        horizontal_seeds = [
-            [i, j] for i in range(0, self._width - 3) for j in range(0, self._height)
-        ]
-        vertical_seeds = [[j, i] for [i, j] in horizontal_seeds]
-        up_diag_seeds = [
-            [i, j]
-            for i in range(0, self._width - 3)
-            for j in range(0, self._height - 3)
-        ]
-        down_diag_seeds = [
-            [i, j] for i in range(0, self._width - 3) for j in range(3, self._height)
-        ]
 
-        for [i, j] in horizontal_seeds:
-            if self.check_line([[i + k, j] for k in range(4)]):
+        for [i, j] in self.vertical_seeds:
+            if self.check_line([[i, j + k] for k in range(LINE_LENGTH)]):
+                return True
+        
+        for [i, j] in self.horizontal_seeds:
+            if self.check_line([[i + k, j] for k in range(LINE_LENGTH)]):
                 return True
 
-        for [i, j] in vertical_seeds:
-            if self.check_line([[i, j + k] for k in range(4)]):
+        for [i, j] in self.up_diag_seeds:
+            if self.check_line([[i + k, j + k] for k in range(LINE_LENGTH)]):
                 return True
 
-        for [i, j] in up_diag_seeds:
-            if self.check_line([[i + k, j + k] for k in range(4)]):
-                return True
-
-        for [i, j] in down_diag_seeds:
-            if self.check_line([[i + k, j - k] for k in range(4)]):
+        for [i, j] in self.down_diag_seeds:
+            if self.check_line([[i + k, j - k] for k in range(LINE_LENGTH)]):
                 return True
 
         return False
@@ -126,7 +128,7 @@ class Game:
         # Header
         print(f"MOVE: {str(self._move_num)}")
         print(f"PLAYER {str(self._player)} PLAYS {str(self._move)}")
-        print("-" * 8)
+        print("-" * BOARD_SIZE)
 
         # Board
         copy = deepcopy(self._board)
@@ -140,10 +142,10 @@ class Game:
 
         # Footer
         if msg:
-            print("-" * 8)
+            print("-" * BOARD_SIZE)
             print(msg)
 
-        print("=" * 8)
+        print("=" * BOARD_SIZE)
 
 
 ####################
@@ -160,13 +162,13 @@ def run_game(alg0, alg1, verbose=0):
     board = g._board
 
     while True:
-        move = alg0.move(board, as_player=0)
+        move = alg0.move(board, 0)
         winner, board = g.move(move)
 
         if winner is not None:
             return winner
 
-        move = alg1.move(board, as_player=1)
+        move = alg1.move(board, 1)
         winner, board = g.move(move)
 
         if winner is not None:
@@ -179,7 +181,7 @@ def play_game(opponent):
     board = g._board
 
     while True:
-        move = opponent.move(board, as_player=0)
+        move = opponent.move(board, 0)
         winner, board = g.move(move)
 
         if winner is not None:
