@@ -99,6 +99,8 @@ def training_loop(training_model, opponent_model, verbose=False):
 
             if winner is None:
                 target = r + y * np.max(training_model.predict(new_board, as_player))
+            else:
+                target = r
 
             target_vec = deepcopy(preds[0])
             target_vec[move] = target
