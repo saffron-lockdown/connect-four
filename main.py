@@ -21,7 +21,7 @@ class Game:
         self.horizontal_seeds = [
             [i, j] for i in range(0, self._width - LINE_LENGTH + 1) for j in range(0, self._height)
         ]
-        self.vertical_seeds = [[j, i] for [i, j] in horizontal_seeds]
+        self.vertical_seeds = [[j, i] for [i, j] in self.horizontal_seeds]
         self.up_diag_seeds = [
             [i, j]
             for i in range(0, self._width - LINE_LENGTH + 1)
