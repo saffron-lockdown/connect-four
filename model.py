@@ -38,6 +38,7 @@ class BasicModel:
     def fit(self, *args, **kwargs):
         pass
 
+
 class RandomModel:
 
     _name = "random_model"
@@ -130,4 +131,4 @@ class Model:
         self._model.fit(self.input_encoding(board, as_player), *args, **kwargs)
 
     def save(self, model_name):
-        self._model.save('models/' + model_name)
+        self._model.save("models/" + model_name)

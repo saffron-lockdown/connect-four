@@ -99,7 +99,7 @@ def training_loop(training_model, opponent_model, verbose=False):
 
             if winner is None:
                 target = r + y * np.max(training_model.predict(new_board, as_player))
-            
+
             target_vec = deepcopy(preds[0])
             target_vec[move] = target
 
@@ -140,11 +140,10 @@ def training_loop(training_model, opponent_model, verbose=False):
         n_moves_list.append(move_num)
 
         tensorboard.update_stats(
-            reward_sum = r_sum,
-            wins=wins[-1],
-            n_moves_avg=n_moves_list[-1]
+            reward_sum=r_sum, wins=wins[-1], n_moves_avg=n_moves_list[-1]
         )
         tensorboard.update_dist(moves_played=moves_played)
+
 
 def performance_stats(model1, model2, verbose=False, N_RUNS=50):
 
@@ -199,10 +198,7 @@ random_model = RandomModel()
 m1 = Model(model_name="m1-1.model")
 m2 = Model(model_name="m2-1.model")
 
-log_dir = (
-        "logs/overall/"
-        + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    )
+log_dir = "logs/overall/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_overall = ModifiedTensorBoard(log_dir=log_dir)
 
 
@@ -213,15 +209,14 @@ for i in range(20):
 
     training_loop(m1, m2, verbose=True)
     training_loop(m2, m1, verbose=True)
-    
-    tensorboard_overall.update_stats(
-        m1_win_rate_v_basic = performance_stats(m1, basic),
-        m2_win_rate_v_basic = performance_stats(m2, basic),
-        m1_win_rate_v_random = performance_stats(m1, random_model),
-        m2_win_rate_v_random = performance_stats(m2, random_model)
 
+    tensorboard_overall.update_stats(
+        m1_win_rate_v_basic=performance_stats(m1, basic),
+        m2_win_rate_v_basic=performance_stats(m2, basic),
+        m1_win_rate_v_random=performance_stats(m1, random_model),
+        m2_win_rate_v_random=performance_stats(m2, random_model),
     )
-    
+
     m1.save("m1-1.model")
     m2.save("m2-1.model")
 

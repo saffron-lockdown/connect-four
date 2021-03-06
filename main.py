@@ -2,7 +2,7 @@ import random
 from copy import deepcopy
 
 BOARD_SIZE = 4
-LINE_LENGTH = 3 # the line you need to make
+LINE_LENGTH = 3  # the line you need to make
 
 
 class Game:
@@ -19,7 +19,9 @@ class Game:
         self._verbose = verbose
 
         self.horizontal_seeds = [
-            [i, j] for i in range(0, self._width - LINE_LENGTH + 1) for j in range(0, self._height)
+            [i, j]
+            for i in range(0, self._width - LINE_LENGTH + 1)
+            for j in range(0, self._height)
         ]
         self.vertical_seeds = [[j, i] for [i, j] in self.horizontal_seeds]
         self.up_diag_seeds = [
@@ -28,7 +30,9 @@ class Game:
             for j in range(0, self._height - LINE_LENGTH + 1)
         ]
         self.down_diag_seeds = [
-            [i, j] for i in range(0, self._width - LINE_LENGTH + 1) for j in range(LINE_LENGTH - 1, self._height)
+            [i, j]
+            for i in range(0, self._width - LINE_LENGTH + 1)
+            for j in range(LINE_LENGTH - 1, self._height)
         ]
 
     def move(self, col_num):
@@ -102,7 +106,7 @@ class Game:
         for [i, j] in self.vertical_seeds:
             if self.check_line([[i, j + k] for k in range(LINE_LENGTH)]):
                 return True
-        
+
         for [i, j] in self.horizontal_seeds:
             if self.check_line([[i + k, j] for k in range(LINE_LENGTH)]):
                 return True
